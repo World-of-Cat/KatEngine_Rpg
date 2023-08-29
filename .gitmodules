@@ -10,3 +10,6 @@
 [submodule "libs/stb"]
 	path = libs/stb
 	url = https://github.com/nothings/stb
+[submodule "libs/eventpp"]
+	path = libs/eventpp
+	url = https://github.com/wqking/eventpp
