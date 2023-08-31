@@ -5,16 +5,32 @@
 #include <glm/glm.hpp>
 #include <spdlog/spdlog.h>
 
+#include <filesystem>
+#include <string>
+#include <vector>
+
 namespace kat {
     // Forward Definitions
     class Window;
-
+    class GraphicsContext;
 
 
     // Global State
     namespace gbl {
         inline std::shared_ptr<Window> activeWindow;
+        inline std::shared_ptr<GraphicsContext> activeGraphicsContext;
 
         void cleanup();
+    }
+
+    // Utility
+    namespace util {
+        std::string readFile(const std::filesystem::path& path);
+
+        bool isWhitespace(char c);
+
+        std::string strip(const std::string& in);
+        std::string lstrip(const std::string& in);
+        std::string rstrip(const std::string& in);
     }
 }

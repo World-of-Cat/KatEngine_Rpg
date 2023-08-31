@@ -3,7 +3,15 @@ project(KatEngine VERSION 0.1.0)
 
 add_library(KatEngine src/kat/engine.cpp src/kat/engine.hpp
         src/kat/os.cpp
-        src/kat/os.hpp)
+        src/kat/os.hpp
+        src/kat/graphics.cpp
+        src/kat/graphics.hpp
+        src/kat/graphics/texture.cpp
+        src/kat/graphics/texture.hpp
+        src/kat/graphics/mesh.cpp
+        src/kat/graphics/mesh.hpp
+        src/kat/graphics/shader.cpp
+        src/kat/graphics/shader.hpp)
 target_include_directories(KatEngine PUBLIC src/)
 target_link_libraries(KatEngine PUBLIC glfw glad::glad glm::glm stb::stb spdlog::spdlog eventpp::eventpp)
 
