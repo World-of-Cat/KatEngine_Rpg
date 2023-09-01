@@ -38,12 +38,12 @@ int main() {
 
     spdlog::info("{}", glm::to_string(glm::vec4(glm::rgbColor(glm::vec3(180.0f, 1.0f, 1.0f)), 1.0f)));
 
-    int n = 96;
+    int n = 6;
 
     for (int i = 0 ; i < n ; i++) {
         float x = cosf(float(i) / float(n >> 1) * 3.14159f);
         float y = sinf(float(i) / float(n >> 1) * 3.14159f);
-        vertices.push_back({ {x, y, 0.0f}, { 0.0f, 0.0f },
+        vertices.push_back({ {x, y, 0.0f}, { 1.0f, 0.0f },
                              glm::vec4(glm::rgbColor(glm::vec3(360.0f * float(i) / float(n), 1.0f, 1.0f)), 1.0f),
                              { 0.0f, 0.0f, 1.0f } });
         indices.push_back(i + 1);
@@ -60,6 +60,8 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+        shader->setFloat("uTime", static_cast<float>(glfwGetTime()));
 
         shader->bind();
         mesh->render(kat::PrimitiveMode::TriangleFan);

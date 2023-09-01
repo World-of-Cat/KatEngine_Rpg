@@ -1,5 +1,6 @@
 #include "shader.hpp"
 
+#include <glm/gtc/type_ptr.hpp>
 
 namespace kat {
     ShaderType getTypeFromName(const std::string& name) {
@@ -224,6 +225,143 @@ namespace kat {
         glUseProgram(m_Handle);
     }
 
+    int GraphicsShader::getUniformLocation(const std::string &name) const {
+        return glGetUniformLocation(m_Handle, name.c_str());
+    }
+
+    void GraphicsShader::setInteger(const std::string &name, int x) const {
+        glProgramUniform1i(m_Handle, getUniformLocation(name), x);
+    }
+
+    void GraphicsShader::setVec2i(const std::string &name, int x, int y) const {
+        glProgramUniform2i(m_Handle, getUniformLocation(name), x, y);
+    }
+
+    void GraphicsShader::setVec3i(const std::string &name, int x, int y, int z) const {
+        glProgramUniform3i(m_Handle, getUniformLocation(name), x, y, z);
+    }
+
+    void GraphicsShader::setVec4i(const std::string &name, int x, int y, int z, int w) const {
+        glProgramUniform4i(m_Handle, getUniformLocation(name), x, y, z, w);
+    }
+
+    void GraphicsShader::setVec2i(const std::string &name, const glm::ivec2 &v) const {
+        glProgramUniform2iv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void GraphicsShader::setVec3i(const std::string &name, const glm::ivec3 &v) const {
+        glProgramUniform3iv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void GraphicsShader::setVec4i(const std::string &name, const glm::ivec4 &v) const {
+        glProgramUniform4iv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void GraphicsShader::setFloat(const std::string &name, float x) const {
+        glProgramUniform1f(m_Handle, getUniformLocation(name), x);
+    }
+
+    void GraphicsShader::setVec2f(const std::string &name, float x, float y) const {
+        glProgramUniform2f(m_Handle, getUniformLocation(name), x, y);
+    }
+
+    void GraphicsShader::setVec3f(const std::string &name, float x, float y, float z) const {
+        glProgramUniform3f(m_Handle, getUniformLocation(name), x, y, z);
+    }
+
+    void GraphicsShader::setVec4f(const std::string &name, float x, float y, float z, float w) const {
+        glProgramUniform4f(m_Handle, getUniformLocation(name), x, y, z, w);
+    }
+
+    void GraphicsShader::setVec2f(const std::string &name, const glm::fvec2 &v) const {
+        glProgramUniform2fv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void GraphicsShader::setVec3f(const std::string &name, const glm::fvec3 &v) const {
+        glProgramUniform3fv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void GraphicsShader::setVec4f(const std::string &name, const glm::fvec4 &v) const {
+        glProgramUniform4fv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void GraphicsShader::setUnsignedInt(const std::string &name, unsigned int x) const {
+        glProgramUniform1ui(m_Handle, getUniformLocation(name), x);
+    }
+
+    void GraphicsShader::setVec2u(const std::string &name, unsigned int x, unsigned int y) const {
+        glProgramUniform2ui(m_Handle, getUniformLocation(name), x, y);
+    }
+
+    void GraphicsShader::setVec3u(const std::string &name, unsigned int x, unsigned int y, unsigned int z) const {
+        glProgramUniform3ui(m_Handle, getUniformLocation(name), x, y, z);
+    }
+
+    void GraphicsShader::setVec4u(const std::string &name, unsigned int x, unsigned int y, unsigned int z, unsigned int w) const {
+        glProgramUniform4ui(m_Handle, getUniformLocation(name), x, y, z, w);
+    }
+
+    void GraphicsShader::setVec2u(const std::string &name, const glm::uvec2 &v) const {
+        glProgramUniform2uiv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void GraphicsShader::setVec3u(const std::string &name, const glm::uvec3 &v) const {
+        glProgramUniform3uiv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void GraphicsShader::setVec4u(const std::string &name, const glm::uvec4 &v) const {
+        glProgramUniform4uiv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+
+    void GraphicsShader::setMatrix2f(const std::string &name, const glm::mat2 &m) const {
+        glProgramUniformMatrix2fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void GraphicsShader::setMatrix2x2f(const std::string &name, const glm::mat2x2 &m) const {
+        glProgramUniformMatrix2fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void GraphicsShader::setMatrix2x3f(const std::string &name, const glm::mat2x3 &m) const {
+        glProgramUniformMatrix2x3fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void GraphicsShader::setMatrix2x4f(const std::string &name, const glm::mat2x4 &m) const {
+        glProgramUniformMatrix2x4fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void GraphicsShader::setMatrix3f(const std::string &name, const glm::mat3 &m) const {
+        glProgramUniformMatrix3fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void GraphicsShader::setMatrix3x2f(const std::string &name, const glm::mat3x2 &m) const {
+        glProgramUniformMatrix3x2fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void GraphicsShader::setMatrix3x3f(const std::string &name, const glm::mat3x3 &m) const {
+        glProgramUniformMatrix3fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void GraphicsShader::setMatrix3x4f(const std::string &name, const glm::mat3x4 &m) const {
+        glProgramUniformMatrix3x4fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void GraphicsShader::setMatrix4f(const std::string &name, const glm::mat4 &m) const {
+        glProgramUniformMatrix4fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void GraphicsShader::setMatrix4x2f(const std::string &name, const glm::mat4x2 &m) const {
+        glProgramUniformMatrix4x2fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void GraphicsShader::setMatrix4x3f(const std::string &name, const glm::mat4x3 &m) const {
+        glProgramUniformMatrix4x3fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void GraphicsShader::setMatrix4x4f(const std::string &name, const glm::mat4x4 &m) const {
+        glProgramUniformMatrix4fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
     std::shared_ptr<ComputeShader> ComputeShader::load(const std::filesystem::path& path) {
         return std::make_shared<ComputeShader>(util::readFile(path));
     }
@@ -285,4 +423,142 @@ namespace kat {
         bind();
         glDispatchCompute(xGroups, yGroups, zGroups);
     }
+
+    int ComputeShader::getUniformLocation(const std::string &name) const {
+        return glGetUniformLocation(m_Handle, name.c_str());
+    }
+
+    void ComputeShader::setInteger(const std::string &name, int x) const {
+        glProgramUniform1i(m_Handle, getUniformLocation(name), x);
+    }
+
+    void ComputeShader::setVec2i(const std::string &name, int x, int y) const {
+        glProgramUniform2i(m_Handle, getUniformLocation(name), x, y);
+    }
+
+    void ComputeShader::setVec3i(const std::string &name, int x, int y, int z) const {
+        glProgramUniform3i(m_Handle, getUniformLocation(name), x, y, z);
+    }
+
+    void ComputeShader::setVec4i(const std::string &name, int x, int y, int z, int w) const {
+        glProgramUniform4i(m_Handle, getUniformLocation(name), x, y, z, w);
+    }
+
+    void ComputeShader::setVec2i(const std::string &name, const glm::ivec2 &v) const {
+        glProgramUniform2iv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void ComputeShader::setVec3i(const std::string &name, const glm::ivec3 &v) const {
+        glProgramUniform3iv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void ComputeShader::setVec4i(const std::string &name, const glm::ivec4 &v) const {
+        glProgramUniform4iv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void ComputeShader::setFloat(const std::string &name, float x) const {
+        glProgramUniform1f(m_Handle, getUniformLocation(name), x);
+    }
+
+    void ComputeShader::setVec2f(const std::string &name, float x, float y) const {
+        glProgramUniform2f(m_Handle, getUniformLocation(name), x, y);
+    }
+
+    void ComputeShader::setVec3f(const std::string &name, float x, float y, float z) const {
+        glProgramUniform3f(m_Handle, getUniformLocation(name), x, y, z);
+    }
+
+    void ComputeShader::setVec4f(const std::string &name, float x, float y, float z, float w) const {
+        glProgramUniform4f(m_Handle, getUniformLocation(name), x, y, z, w);
+    }
+
+    void ComputeShader::setVec2f(const std::string &name, const glm::fvec2 &v) const {
+        glProgramUniform2fv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void ComputeShader::setVec3f(const std::string &name, const glm::fvec3 &v) const {
+        glProgramUniform3fv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void ComputeShader::setVec4f(const std::string &name, const glm::fvec4 &v) const {
+        glProgramUniform4fv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void ComputeShader::setUnsignedInt(const std::string &name, unsigned int x) const {
+        glProgramUniform1ui(m_Handle, getUniformLocation(name), x);
+    }
+
+    void ComputeShader::setVec2u(const std::string &name, unsigned int x, unsigned int y) const {
+        glProgramUniform2ui(m_Handle, getUniformLocation(name), x, y);
+    }
+
+    void ComputeShader::setVec3u(const std::string &name, unsigned int x, unsigned int y, unsigned int z) const {
+        glProgramUniform3ui(m_Handle, getUniformLocation(name), x, y, z);
+    }
+
+    void ComputeShader::setVec4u(const std::string &name, unsigned int x, unsigned int y, unsigned int z, unsigned int w) const {
+        glProgramUniform4ui(m_Handle, getUniformLocation(name), x, y, z, w);
+    }
+
+    void ComputeShader::setVec2u(const std::string &name, const glm::uvec2 &v) const {
+        glProgramUniform2uiv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void ComputeShader::setVec3u(const std::string &name, const glm::uvec3 &v) const {
+        glProgramUniform3uiv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+    void ComputeShader::setVec4u(const std::string &name, const glm::uvec4 &v) const {
+        glProgramUniform4uiv(m_Handle, getUniformLocation(name), 1, glm::value_ptr(v));
+    }
+
+
+    void ComputeShader::setMatrix2f(const std::string &name, const glm::mat2 &m) const {
+        glProgramUniformMatrix2fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void ComputeShader::setMatrix2x2f(const std::string &name, const glm::mat2x2 &m) const {
+        glProgramUniformMatrix2fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void ComputeShader::setMatrix2x3f(const std::string &name, const glm::mat2x3 &m) const {
+        glProgramUniformMatrix2x3fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void ComputeShader::setMatrix2x4f(const std::string &name, const glm::mat2x4 &m) const {
+        glProgramUniformMatrix2x4fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void ComputeShader::setMatrix3f(const std::string &name, const glm::mat3 &m) const {
+        glProgramUniformMatrix3fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void ComputeShader::setMatrix3x2f(const std::string &name, const glm::mat3x2 &m) const {
+        glProgramUniformMatrix3x2fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void ComputeShader::setMatrix3x3f(const std::string &name, const glm::mat3x3 &m) const {
+        glProgramUniformMatrix3fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void ComputeShader::setMatrix3x4f(const std::string &name, const glm::mat3x4 &m) const {
+        glProgramUniformMatrix3x4fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void ComputeShader::setMatrix4f(const std::string &name, const glm::mat4 &m) const {
+        glProgramUniformMatrix4fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void ComputeShader::setMatrix4x2f(const std::string &name, const glm::mat4x2 &m) const {
+        glProgramUniformMatrix4x2fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void ComputeShader::setMatrix4x3f(const std::string &name, const glm::mat4x3 &m) const {
+        glProgramUniformMatrix4x3fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    void ComputeShader::setMatrix4x4f(const std::string &name, const glm::mat4x4 &m) const {
+        glProgramUniformMatrix4fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
 }
