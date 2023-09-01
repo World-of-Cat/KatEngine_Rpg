@@ -28,6 +28,8 @@ namespace kat {
 
         void update();
 
+        glm::ivec2 getSize() const;
+
     private:
         explicit Window(const Config &config);
 

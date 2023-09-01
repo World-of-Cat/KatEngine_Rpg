@@ -11,7 +11,9 @@ add_library(KatEngine src/kat/engine.cpp src/kat/engine.hpp
         src/kat/graphics/mesh.cpp
         src/kat/graphics/mesh.hpp
         src/kat/graphics/shader.cpp
-        src/kat/graphics/shader.hpp)
+        src/kat/graphics/shader.hpp
+        src/kat/graphics/render_target.cpp
+        src/kat/graphics/render_target.hpp)
 target_include_directories(KatEngine PUBLIC src/)
 target_link_libraries(KatEngine PUBLIC glfw glad::glad glm::glm stb::stb spdlog::spdlog eventpp::eventpp)
 

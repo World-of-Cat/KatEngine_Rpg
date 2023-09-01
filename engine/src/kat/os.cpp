@@ -70,4 +70,10 @@ namespace kat {
         glfwSwapBuffers(m_Window);
         glfwPollEvents();
     }
+
+    glm::ivec2 Window::getSize() const {
+        glm::ivec2 v;
+        glfwGetFramebufferSize(m_Window, &v.x, &v.y);
+        return v;
+    }
 }

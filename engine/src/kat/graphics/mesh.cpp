@@ -2,7 +2,7 @@
 
 namespace kat {
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "cppcoreguidelines-pro-m_Type-member-init"
+#pragma ide diagnostic ignored "cppcoreguidelines-pro-type-member-init"
     Buffer::Buffer() {
         glCreateBuffers(1, &m_Handle);
     }
@@ -50,7 +50,7 @@ namespace kat {
     }
 
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "cppcoreguidelines-pro-m_Type-member-init"
+#pragma ide diagnostic ignored "cppcoreguidelines-pro-type-member-init"
     VertexArray::VertexArray() {
         glCreateVertexArrays(1, &m_Handle);
     }
@@ -158,17 +158,17 @@ namespace kat {
         bindVertexBuffer(buffer.getHandle(), attributes, bufferOffset);
     }
 
-    void VertexArray::bind() {
+    void VertexArray::bind() const {
         glBindVertexArray(m_Handle);
     }
 
-    void VertexArray::drawElements(PrimitiveMode mode, size_t count, size_t offset) {
+    void VertexArray::drawElements(PrimitiveMode mode, size_t count, size_t offset) const {
         bind();
         glDrawElements(static_cast<unsigned int>(mode), static_cast<int>(count), GL_UNSIGNED_INT,
                 reinterpret_cast<const void*>(offset * sizeof(unsigned int)));
     }
 
-    void VertexArray::drawArrays(PrimitiveMode mode, size_t count, size_t offset) {
+    void VertexArray::drawArrays(PrimitiveMode mode, size_t count, size_t offset) const {
         bind();
         glDrawArrays(static_cast<unsigned int>(mode), static_cast<int>(offset), static_cast<int>(count));
     }
@@ -192,7 +192,7 @@ namespace kat {
     Mesh::Mesh(size_t vertexCount, const std::shared_ptr<VertexArray> &vertexArray,
                const std::vector<std::shared_ptr<VertexBuffer>> &vertexBuffers, size_t offset,
                PrimitiveMode primitive) : m_Count(vertexCount), m_VertexArray(vertexArray),
-               m_VertexBuffers(vertexBuffers), m_Offset(offset) {
+               m_VertexBuffers(vertexBuffers), m_Offset(offset), m_Primitive(primitive) {
 
     }
 

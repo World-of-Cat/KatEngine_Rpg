@@ -59,7 +59,7 @@ namespace kat {
 
         virtual ~ITexture();
 
-        void bind(uint32_t unit);
+        void bindUnit(uint32_t unit);
         virtual void bind() = 0;
 
         unsigned int operator*() const noexcept;
@@ -77,6 +77,9 @@ namespace kat {
     protected:
         unsigned int m_Handle;
     };
+
+    int glInternalFormatOf(TextureFormat format);
+    unsigned int glFormatOf(TextureFormat format);
 
     class Texture2D : public ITexture {
     public:

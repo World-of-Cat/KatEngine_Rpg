@@ -6,7 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 namespace kat {
-    void ITexture::bind(uint32_t unit) {
+    void ITexture::bindUnit(uint32_t unit) {
         glActiveTexture(GL_TEXTURE0 + unit);
         bind();
     }
@@ -133,7 +133,10 @@ namespace kat {
                 return TextureFormat::RGB8;
             case 4:
                 return TextureFormat::RGBA8;
+            default: break;
         }
+
+        return TextureFormat::RGBA8;
     }
 
     Texture2D::Texture2D(const glm::uvec2 &size, TextureFormat format) : ITexture(GL_TEXTURE_2D) {

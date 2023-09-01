@@ -141,10 +141,10 @@ namespace kat {
         void bindVertexBuffer(const std::unique_ptr<VertexBuffer>& buffer, const std::vector<size_t>& attributes, size_t bufferOffset = 0);
         void bindVertexBuffer(const VertexBuffer& buffer, const std::vector<size_t>& attributes, size_t bufferOffset = 0);
 
-        void bind();
+        void bind() const;
 
-        void drawElements(PrimitiveMode mode, size_t count, size_t offset = 0);
-        void drawArrays(PrimitiveMode mode, size_t count, size_t offset = 0);
+        void drawElements(PrimitiveMode mode, size_t count, size_t offset = 0) const;
+        void drawArrays(PrimitiveMode mode, size_t count, size_t offset = 0) const;
 
     private:
         unsigned int m_Handle;
