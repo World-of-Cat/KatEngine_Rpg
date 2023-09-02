@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <spdlog/spdlog.h>
+#include <eventpp/eventdispatcher.h>
 
 #include <filesystem>
 #include <string>
@@ -12,15 +13,20 @@
 namespace kat {
     // Forward Definitions
     class Window;
-    class GraphicsContext;
 
+    enum AppEvent {
+        Initialize, Cleanup
+    };
 
     // Global State
     namespace gbl {
+
         inline std::shared_ptr<Window> activeWindow;
-        inline std::shared_ptr<GraphicsContext> activeGraphicsContext;
 
         void cleanup();
+        void setup(); // registers init/cleanup event handlers
+
+        eventpp::EventDispatcher<AppEvent, void()> appEvents;
     }
 
     // Utility

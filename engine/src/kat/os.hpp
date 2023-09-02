@@ -33,9 +33,15 @@ namespace kat {
         GLFWwindow* operator*() const noexcept;
         [[nodiscard]] GLFWwindow* getHandle() const noexcept;
 
+        bool getKey(int key);
+
     private:
         explicit Window(const Config &config);
 
         GLFWwindow *m_Window;
     };
+
+    namespace input {
+        bool isKeyPressed(int key);
+    }
 }

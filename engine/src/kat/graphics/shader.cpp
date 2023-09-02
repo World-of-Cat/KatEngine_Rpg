@@ -1,6 +1,7 @@
 #include "shader.hpp"
 
 #include <glm/gtc/type_ptr.hpp>
+#include "kat/graphics/texture.hpp"
 
 namespace kat {
     ShaderType getTypeFromName(const std::string& name) {
@@ -559,6 +560,19 @@ namespace kat {
 
     void ComputeShader::setMatrix4x4f(const std::string &name, const glm::mat4x4 &m) const {
         glProgramUniformMatrix4fv(m_Handle, getUniformLocation(name), 1, false, glm::value_ptr(m));
+    }
+
+    // Texture extension
+    void
+    GraphicsShader::bindTexture(const std::string &name, int unit, const std::shared_ptr<Texture2D> &texture) {
+        texture->bindUnit(0);
+        setInteger(name, unit);
+    }
+
+    void
+    ComputeShader::bindTexture(const std::string &name, int unit, const std::shared_ptr<Texture2D> &texture) {
+        texture->bindUnit(0);
+        setInteger(name, unit);
     }
 
 }

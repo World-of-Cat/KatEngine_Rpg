@@ -1,27 +1,30 @@
 #include "th/triggerhappy.hpp"
+#include "kat/graphics/colors.hpp"
 
 #include <kat/graphics/mesh.hpp>
 #include <kat/graphics/shader.hpp>
 #include <kat/graphics/render_target.hpp>
+#include <kat/graphics.hpp>
+#include <kat/util/camera.hpp>
+#include <kat/util/math.hpp>
+#include <kat/util/clock.hpp>
 
 #include <glm/gtx/color_space.hpp>
 #include <glm/gtx/string_cast.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 
-glm::vec4 rgba8888(unsigned int v) {
-    float r = float((v >> 24) & 0xff) / 255.0f;
-    float g = float((v >> 16) & 0xff) / 255.0f;
-    float b = float((v >> 8) & 0xff) / 255.0f;
-    float a = float(v & 0xff) / 255.0f;
-    return { r, g, b, a };
-}
+
+
 
 namespace th {
 
 }
 
 int main() {
+    kat::gbl::setup();
+
+    spdlog::set_level(spdlog::level::debug);
 
     kat::Window::create(kat::Window::Config{
         "Window",
@@ -43,10 +46,10 @@ int main() {
     };
 
     std::vector<kat::StandardVertex> vertices = {
-            { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-            { {  1.0f, -1.0f, 0.0f }, { 0.5f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-            { {  1.0f,  1.0f, 0.0f }, { 0.5f, 1.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-            { { -1.0f,  1.0f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+            { { -64.0f, -64.0f, 0.0f }, { 0.0f, 0.5f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+            { {  64.0f, -64.0f, 0.0f }, { 0.375f, 0.5f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+            { {  64.0f,  64.0f, 0.0f }, { 0.375f, 1.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+            { { -64.0f,  64.0f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
     };
 
     std::vector<unsigned int> indices = {
@@ -68,47 +71,73 @@ int main() {
 
     screenTex->setFilter(kat::TextureFilter::Nearest);
 
-    glm::mat4 mat = glm::scale(glm::identity<glm::mat4>(), {0.25f, 0.25f, 0.25f});
+    auto camera = std::make_shared<kat::util::OrthographicCamera>(-120, 120, -67.5, 67.5);
 
     auto tex = kat::Texture2D::load("textures/test.png");
     tex->setFilter(kat::TextureFilter::Nearest);
 
+    auto clock = kat::util::Clock();
 
     while (kat::gbl::activeWindow->isOpen()) {
 
-        glm::dvec2 mp;
-        glfwGetCursorPos(kat::gbl::activeWindow->getHandle(), &mp.x, &mp.y);
-        float mx = mp.x / 640.0f - 1.0f;
-        float my = 1.0f - mp.y / 360.0f;
+        float moveScale = 1.0f;
+        if (kat::input::isKeyPressed(GLFW_KEY_LEFT_SHIFT) || kat::input::isKeyPressed(GLFW_KEY_RIGHT_SHIFT)) {
+            moveScale = 2.0f;
+        }
+        else if (kat::input::isKeyPressed(GLFW_KEY_LEFT_CONTROL) || kat::input::isKeyPressed(GLFW_KEY_RIGHT_CONTROL)) {
+            moveScale = 0.5f;
+        }
+
+        if (kat::input::isKeyPressed(GLFW_KEY_A)) {
+            camera->move(moveScale * glm::vec3{-128.0f * clock.getDeltaTime().count(), 0.0f, 0.0f});
+        }
+
+        if (kat::input::isKeyPressed(GLFW_KEY_D)) {
+            camera->move(moveScale * glm::vec3{128.0f * clock.getDeltaTime().count(), 0.0f, 0.0f});
+        }
+
+        if (kat::input::isKeyPressed(GLFW_KEY_W)) {
+            camera->move(moveScale * glm::vec3{0.0f, 128.0f * clock.getDeltaTime().count(), 0.0f});
+        }
+
+        if (kat::input::isKeyPressed(GLFW_KEY_S)) {
+            camera->move(moveScale * glm::vec3{0.0f, -128.0f * clock.getDeltaTime().count(), 0.0f});
+        }
+
+        if (kat::input::isKeyPressed(GLFW_KEY_MINUS)) {
+            camera->addZoom(-0.25 * moveScale * clock.getDeltaTime().count());
+        }
+
+        if (kat::input::isKeyPressed(GLFW_KEY_EQUAL)) {
+            camera->addZoom(0.25 * moveScale * clock.getDeltaTime().count());
+        }
+
+        camera->update();
 
         screenFb->bindViewport();
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-        shader->setFloat("uTime", static_cast<float>(glfwGetTime()));
-        shader->setMatrix4f("uMatrix", mat);
-        shader->setVec3f("uLightPos", {mx, my, -1});
-
-        tex->bindUnit(0);
-        shader->setInteger("uTexture", 0);
+        kat::graphics::clear(kat::colors::BLACK);
+        kat::graphics::polygonMode(kat::graphics::PolygonMode::Fill);
 
         shader->bind();
+        shader->bindTexture("uTexture", 0, tex);
+        shader->setMatrix4f("uViewProjection", camera->getCombined());
         mesh->render();
 
         kat::Framebuffer::bindDefaultViewport();
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        kat::graphics::polygonMode(kat::graphics::PolygonMode::Fill);
+
+        if (camera->getZoomScale() < 1.0f) {
+            kat::graphics::clear({0.75f, 0.75f, 0.75f, 1.0f});
+        }
 
         screenShader->bind();
-        screenTex->bindUnit(0);
-
-        screenShader->setInteger("uTexture", 0);
-
+        screenShader->bindTexture("uTexture", 0, screenTex);
+        screenShader->setFloat("uScale", camera->getZoomScale());
         screenMesh->render();
 
         kat::gbl::activeWindow->update();
+        clock.tick();
     }
 
     kat::gbl::cleanup();

@@ -10,11 +10,11 @@ out vec3 fNormal;
 out vec2 fUV;
 out vec4 fPosition;
 
-uniform mat4 uMatrix;
+uniform mat4 uViewProjection;
 
 
 void main() {
-    fPosition = uMatrix * vec4(vPosition, 1.0);
+    fPosition = uViewProjection * vec4(vPosition, 1.0);
 
     gl_Position = fPosition;
 

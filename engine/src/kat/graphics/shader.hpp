@@ -5,6 +5,10 @@
 #include <filesystem>
 
 namespace kat {
+    // Forward Decls
+    class Texture2D;
+
+    // shader.hpp Decls
 
     enum class ShaderType {
         Geometry = GL_GEOMETRY_SHADER,
@@ -45,6 +49,23 @@ namespace kat {
         using SSrcDef = std::variant<std::string, std::pair<ShaderType, std::string>>;
 
         static std::shared_ptr<GraphicsShader> load(const std::vector<SDef>& paths);
+
+        inline static std::shared_ptr<GraphicsShader> create(const std::vector<std::shared_ptr<ShaderModule>>& modules) {
+            return std::make_shared<GraphicsShader>(modules);
+        };
+
+        inline static std::shared_ptr<GraphicsShader> create(const std::vector<SSrcDef>& shaders) {
+            return std::make_shared<GraphicsShader>(shaders);
+        };
+
+        inline static std::unique_ptr<GraphicsShader> createUnique(const std::vector<std::shared_ptr<ShaderModule>>& modules) {
+            return std::make_unique<GraphicsShader>(modules);
+        };
+
+        inline static std::unique_ptr<GraphicsShader> createUnique(const std::vector<SSrcDef>& shaders) {
+            return std::make_unique<GraphicsShader>(shaders);
+        };
+
 
         GraphicsShader(const std::vector<std::shared_ptr<ShaderModule>>& modules);
         GraphicsShader(const std::vector<SSrcDef>& shaders);
@@ -96,7 +117,7 @@ namespace kat {
         void setMatrix4x3f(const std::string& name, const glm::mat4x3& m) const;
         void setMatrix4x4f(const std::string& name, const glm::mat4x4& m) const;
 
-
+        void bindTexture(const std::string& name, int unit, const std::shared_ptr<Texture2D>& texture);
     private:
 
         unsigned int m_Handle;
@@ -158,6 +179,7 @@ namespace kat {
         void setMatrix4x3f(const std::string& name, const glm::mat4x3& m) const;
         void setMatrix4x4f(const std::string& name, const glm::mat4x4& m) const;
 
+        void bindTexture(const std::string& name, int unit, const std::shared_ptr<Texture2D>& texture);
     private:
 
         unsigned int m_Handle;

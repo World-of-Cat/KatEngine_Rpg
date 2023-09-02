@@ -81,11 +81,25 @@ namespace kat {
     int glInternalFormatOf(TextureFormat format);
     unsigned int glFormatOf(TextureFormat format);
 
-    class Texture2D : public ITexture {
+    class Texture2D : public ITexture, public std::enable_shared_from_this<Texture2D> {
     public:
 
-        Texture2D(const glm::uvec2& size, TextureFormat format);
-        Texture2D(const glm::uvec2& size, TextureFormat format, const void* data, PixelDataType dataType);
+        struct Region {
+            std::shared_ptr<Texture2D> texture;
+            glm::uvec2 bottomLeft;
+            glm::uvec2 topRight;
+
+            [[nodiscard]] std::pair<glm::vec2, glm::vec2> getUVPair() const noexcept;
+        };
+
+
+        inline static std::shared_ptr<Texture2D> create(const glm::uvec2& size, TextureFormat format) {
+            return std::shared_ptr<Texture2D>(new Texture2D(size, format));
+        };
+
+        inline static std::shared_ptr<Texture2D> create(const glm::uvec2& size, TextureFormat format, const void* data, PixelDataType dataType) {
+            return std::shared_ptr<Texture2D>(new Texture2D(size, format, data, dataType));
+        };
 
         template<typename T>
         static std::shared_ptr<Texture2D> create(const glm::uvec2& size, TextureFormat format, const std::vector<T>& data) {
@@ -101,5 +115,16 @@ namespace kat {
         static std::shared_ptr<Texture2D> load(const std::filesystem::path& path, int desiredChannels);
 
         void bind() override;
+
+        [[nodiscard]] const glm::uvec2& getSize() const noexcept;
+
+        [[nodiscard]] Region getRegion(glm::uvec2 bottomLeft, glm::uvec2 topRight);
+        [[nodiscard]] Region getFullRegion();
+
+    private:
+        Texture2D(const glm::uvec2& size, TextureFormat format);
+        Texture2D(const glm::uvec2& size, TextureFormat format, const void* data, PixelDataType dataType);
+
+        glm::uvec2 m_Size;
     };
 }

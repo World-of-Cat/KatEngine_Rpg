@@ -3,6 +3,7 @@
 namespace kat {
     std::shared_ptr<Window> Window::create(const Window::Config &config) {
         gbl::activeWindow = std::shared_ptr<Window>(new Window(config));
+        gbl::appEvents.dispatch(AppEvent::Initialize);
         return gbl::activeWindow;
     }
 
@@ -83,5 +84,13 @@ namespace kat {
 
     GLFWwindow *Window::getHandle() const noexcept {
         return m_Window;
+    }
+
+    bool Window::getKey(int key) {
+        return glfwGetKey(m_Window, key) == GLFW_PRESS;
+    }
+
+    bool input::isKeyPressed(int key) {
+        return gbl::activeWindow->getKey(key);
     }
 }

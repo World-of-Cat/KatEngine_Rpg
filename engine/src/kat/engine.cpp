@@ -4,9 +4,11 @@
 #include <fstream>
 #include <ranges>
 #include <algorithm>
+#include "kat/graphics/sprite.hpp"
 
 namespace kat {
     void gbl::cleanup() {
+        gbl::appEvents.dispatch(AppEvent::Cleanup);
         gbl::activeWindow = nullptr;
     }
 
@@ -37,5 +39,10 @@ namespace kat {
         if (l == 0) return in;
         return in.substr(0, l);
 
+    }
+
+    void gbl::setup() {
+        gbl::appEvents.appendListener(kat::AppEvent::Initialize, kat::Sprite::init);
+        gbl::appEvents.appendListener(kat::AppEvent::Cleanup, kat::Sprite::cleanup);
     }
 }

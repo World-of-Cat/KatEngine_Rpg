@@ -139,7 +139,7 @@ namespace kat {
         return TextureFormat::RGBA8;
     }
 
-    Texture2D::Texture2D(const glm::uvec2 &size, TextureFormat format) : ITexture(GL_TEXTURE_2D) {
+    Texture2D::Texture2D(const glm::uvec2 &size, TextureFormat format) : m_Size(size), ITexture(GL_TEXTURE_2D) {
         glBindTexture(GL_TEXTURE_2D, m_Handle);
         glTexImage2D(GL_TEXTURE_2D, 0, glInternalFormatOf(format),
                 static_cast<int>(size.x), static_cast<int>(size.y), 0,
@@ -148,7 +148,7 @@ namespace kat {
     }
 
     Texture2D::Texture2D(const glm::uvec2 &size, TextureFormat format, const void *data, PixelDataType dataType)
-            : ITexture(GL_TEXTURE_2D) {
+            : m_Size(size), ITexture(GL_TEXTURE_2D) {
         glBindTexture(GL_TEXTURE_2D, m_Handle);
         glTexImage2D(GL_TEXTURE_2D, 0, glInternalFormatOf(format),
                 static_cast<int>(size.x), static_cast<int>(size.y), 0,
@@ -190,5 +190,21 @@ namespace kat {
         stbi_image_free(data);
 
         return tex;
+    }
+
+    const glm::uvec2 &Texture2D::getSize() const noexcept {
+        return m_Size;
+    }
+
+    Texture2D::Region Texture2D::getRegion(glm::uvec2 bottomLeft, glm::uvec2 topRight) {
+        return Texture2D::Region(shared_from_this(), bottomLeft, topRight);
+    }
+
+    Texture2D::Region Texture2D::getFullRegion() {
+        return Texture2D::Region(shared_from_this(), {0, 0}, m_Size);
+    }
+
+    std::pair<glm::vec2, glm::vec2> Texture2D::Region::getUVPair() const noexcept {
+        return { glm::vec2(bottomLeft) / glm::vec2(texture->getSize()), glm::vec2(topRight) / glm::vec2(texture->getSize()) };
     }
 }
