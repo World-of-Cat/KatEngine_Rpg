@@ -7,6 +7,15 @@
 #include <glm/gtx/color_space.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+#include <glm/gtc/matrix_transform.hpp>
+
+glm::vec4 rgba8888(unsigned int v) {
+    float r = float((v >> 24) & 0xff) / 255.0f;
+    float g = float((v >> 16) & 0xff) / 255.0f;
+    float b = float((v >> 8) & 0xff) / 255.0f;
+    float a = float(v & 0xff) / 255.0f;
+    return { r, g, b, a };
+}
 
 namespace th {
 
@@ -20,37 +29,6 @@ int main() {
 //        kat::Window::Fullscreen{0, true}
     });
 
-    std::vector<kat::StandardVertex> vertices = {
-            { {  0.00f,  0.00f, 0.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f, 1.0f } },
-//            { {  0.50f, -0.25f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f, 1.0f } },
-//            { {  0.50f,  0.25f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f, 1.0f } },
-//            { {  0.25f,  0.50f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f, 1.0f } },
-//            { { -0.25f,  0.50f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f, 1.0f } },
-//            { { -0.50f,  0.25f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f, 1.0f } },
-//            { { -0.50f, -0.25f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f, 1.0f } },
-//            { { -0.25f, -0.50f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f, 1.0f } },
-//            { {  0.25f, -0.50f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f, 1.0f } },
-    };
-
-    std::vector<unsigned int> indices = {
-//            0,1,2,3,4,5,6,7,8,1
-//            1,2,0,3,7,4,6,5
-        0
-    };
-
-    spdlog::info("{}", glm::to_string(glm::vec4(glm::rgbColor(glm::vec3(180.0f, 1.0f, 1.0f)), 1.0f)));
-
-    int n = 4;
-
-    for (int i = 0 ; i < n ; i++) {
-        float x = cosf(float(i) / float(n >> 1) * 3.14159f);
-        float y = sinf(float(i) / float(n >> 1) * 3.14159f);
-        vertices.push_back({ {x, y, 0.0f}, { 1.0f, 0.0f },
-                             glm::vec4(glm::rgbColor(glm::vec3(360.0f * float(i) / float(n), 1.0f, 1.0f)), 1.0f),
-                             { 0.0f, 0.0f, 1.0f } });
-        indices.push_back(i + 1);
-    }
-    indices.push_back(1);
 
     std::vector<kat::StandardVertex> screenVertices = {
             { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
@@ -64,14 +42,25 @@ int main() {
             0, 2, 3
     };
 
+    std::vector<kat::StandardVertex> vertices = {
+            { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+            { {  1.0f, -1.0f, 0.0f }, { 0.5f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+            { {  1.0f,  1.0f, 0.0f }, { 0.5f, 1.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+            { { -1.0f,  1.0f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
+    };
 
-    auto mesh = std::make_shared<kat::Mesh>(vertices, indices, kat::PrimitiveMode::TriangleFan);
+    std::vector<unsigned int> indices = {
+            0, 1, 2,
+            0, 2, 3
+    };
 
-    auto shader = kat::GraphicsShader::load({"shaders/fragsh.glsl", "shaders/shader.vert"});
+    auto mesh = std::make_shared<kat::Mesh>(vertices, indices, kat::PrimitiveMode::Triangles);
+
+    auto shader = kat::GraphicsShader::load({"shaders/shader2.frag", "shaders/shader2.vert"});
 
     auto screenShader = kat::GraphicsShader::load({"shaders/texturedsg.frag", "shaders/shader.vert"});
 
-    auto screenMesh = std::make_shared<kat::Mesh>(screenVertices, screenIndices, kat::PrimitiveMode::TriangleFan);
+    auto screenMesh = std::make_shared<kat::Mesh>(screenVertices, screenIndices, kat::PrimitiveMode::Triangles);
 
     auto screenFb = std::make_shared<kat::Framebuffer>(glm::uvec2{ 240, 135 });
     auto screenTex = screenFb->addColorAttachment(0, kat::TextureFormat::RGB8);
@@ -79,8 +68,18 @@ int main() {
 
     screenTex->setFilter(kat::TextureFilter::Nearest);
 
+    glm::mat4 mat = glm::scale(glm::identity<glm::mat4>(), {0.25f, 0.25f, 0.25f});
+
+    auto tex = kat::Texture2D::load("textures/test.png");
+    tex->setFilter(kat::TextureFilter::Nearest);
+
 
     while (kat::gbl::activeWindow->isOpen()) {
+
+        glm::dvec2 mp;
+        glfwGetCursorPos(kat::gbl::activeWindow->getHandle(), &mp.x, &mp.y);
+        float mx = mp.x / 640.0f - 1.0f;
+        float my = 1.0f - mp.y / 360.0f;
 
         screenFb->bindViewport();
 
@@ -90,6 +89,11 @@ int main() {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         shader->setFloat("uTime", static_cast<float>(glfwGetTime()));
+        shader->setMatrix4f("uMatrix", mat);
+        shader->setVec3f("uLightPos", {mx, my, -1});
+
+        tex->bindUnit(0);
+        shader->setInteger("uTexture", 0);
 
         shader->bind();
         mesh->render();

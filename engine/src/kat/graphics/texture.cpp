@@ -169,7 +169,7 @@ namespace kat {
 
         unsigned char* data = stbi_load(f.c_str(), &width, &height, &nc, 0);
 
-        auto tex = std::make_shared<Texture2D>(glm::uvec2(width, height), formatForChannels(nc));
+        auto tex = std::make_shared<Texture2D>(glm::uvec2(width, height), formatForChannels(nc), data, kat::PixelDataType::UnsignedByte);
 
         stbi_image_free(data);
 
@@ -185,7 +185,7 @@ namespace kat {
 
         unsigned char* data = stbi_load(f.c_str(), &width, &height, &nc, desiredChannels);
 
-        auto tex = std::make_shared<Texture2D>(glm::uvec2(width, height), formatForChannels(nc));
+        auto tex = std::make_shared<Texture2D>(glm::uvec2(width, height), formatForChannels(desiredChannels), data, kat::PixelDataType::UnsignedByte);
 
         stbi_image_free(data);
 

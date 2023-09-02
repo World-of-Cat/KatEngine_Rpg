@@ -76,4 +76,12 @@ namespace kat {
         glfwGetFramebufferSize(m_Window, &v.x, &v.y);
         return v;
     }
+
+    GLFWwindow *Window::operator*() const noexcept {
+        return m_Window;
+    }
+
+    GLFWwindow *Window::getHandle() const noexcept {
+        return m_Window;
+    }
 }

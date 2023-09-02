@@ -30,6 +30,9 @@ namespace kat {
 
         glm::ivec2 getSize() const;
 
+        GLFWwindow* operator*() const noexcept;
+        [[nodiscard]] GLFWwindow* getHandle() const noexcept;
+
     private:
         explicit Window(const Config &config);
 
