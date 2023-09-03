@@ -8,8 +8,7 @@ namespace th {
         loadAssets();
     }
 
-    TriggerHappy::~TriggerHappy() {
-    }
+    TriggerHappy::~TriggerHappy() = default;
 
     void TriggerHappy::run() {
         kat::gbl::clock.tick();
@@ -43,7 +42,7 @@ namespace th {
 
     void TriggerHappy::loadAssets() {
         m_ScreenQuad = kat::Mesh::createQuad({-1.0f, -1.0f}, {1.0f, 1.0f}, {{0.0f, 0.0f}, {1.0f, 1.0f}});
-        m_TestQuad = kat::Mesh::createQuad({-64.0f, -64.0f}, {64.0f, 64.0f}, { {0.0f, 0.5f}, {0.375f, 1.0f}});
+        m_TestQuad = kat::Mesh::createQuad({-64.0f, -64.0f}, {64.0f, 64.0f}, { {0.0f, 304.0f / 384.0f}, {0.125f, 1.0f}});
         m_TestShader = kat::GraphicsShader::load({"shaders/shader.frag", "shaders/shader.vert"});
         m_ScreenShader = kat::GraphicsShader::load({"shaders/screen.frag", "shaders/screen.vert"});
 
@@ -51,7 +50,7 @@ namespace th {
 
         m_Camera = std::make_shared<kat::util::OrthographicCamera>(-240, 240, -135, 135);
 
-        m_Texture = kat::Texture2D::load("textures/test.png");
+        m_Texture = kat::Texture2D::load("textures/t4-3.png");
     }
 
     void TriggerHappy::update(double deltaTime) {

@@ -164,6 +164,8 @@ namespace kat {
     }
 
     std::shared_ptr<Texture2D> Texture2D::load(const std::filesystem::path &path) {
+        if (!std::filesystem::exists(path)) spdlog::error("Texture {} is missing", path.string());
+
         stbi_set_flip_vertically_on_load_thread(true);
 
         int width, height, nc;
@@ -180,6 +182,8 @@ namespace kat {
     }
 
     std::shared_ptr<Texture2D> Texture2D::load(const std::filesystem::path &path, int desiredChannels) {
+        if (!std::filesystem::exists(path)) spdlog::error("Texture {} is missing", path.string());
+
         stbi_set_flip_vertically_on_load_thread(true);
 
         int width, height, nc;
