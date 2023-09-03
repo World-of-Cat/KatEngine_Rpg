@@ -31,9 +31,14 @@ namespace kat {
     void Sprite::render() {
         kat::graphics::polygonMode(kat::graphics::PolygonMode::Fill);
         kat::transform::push();
+
+        kat::transform::translate(m_Position);
+        kat::transform::scale(m_Size);
+
         s_SpriteShader->bind();
         s_SpriteShader->bindTexture("uTexture", 0, m_TextureRegion.texture);
-        s_SpriteShader->setMatrix4x4f("uViewProjection", )
+
+        s_SpriteMesh->render();
 
         kat::transform::pop();
     }

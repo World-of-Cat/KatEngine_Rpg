@@ -70,6 +70,9 @@ namespace kat {
     void Window::update() {
         glfwSwapBuffers(m_Window);
         glfwPollEvents();
+
+        // don't start updates unless the window is remaining open after pollEvents.
+        if (isOpen()) kat::gbl::appEvents.dispatch(kat::AppEvent::Update);
     }
 
     glm::ivec2 Window::getSize() const {

@@ -1,145 +1,130 @@
 #include "th/triggerhappy.hpp"
-#include "kat/graphics/colors.hpp"
-
-#include <kat/graphics/mesh.hpp>
-#include <kat/graphics/shader.hpp>
-#include <kat/graphics/render_target.hpp>
-#include <kat/graphics.hpp>
-#include <kat/util/camera.hpp>
-#include <kat/util/math.hpp>
-#include <kat/util/clock.hpp>
-
-#include <glm/gtx/color_space.hpp>
-#include <glm/gtx/string_cast.hpp>
-
-#include <glm/gtc/matrix_transform.hpp>
-
-
-
 
 namespace th {
+    TriggerHappy::TriggerHappy() {
+        kat::gbl::setup();
+        setDefaults();
+        createWindow();
+        loadAssets();
+    }
 
-}
+    TriggerHappy::~TriggerHappy() {
+    }
 
-int main() {
-    kat::gbl::setup();
+    void TriggerHappy::run() {
+        kat::gbl::clock.tick();
 
-    spdlog::set_level(spdlog::level::debug);
+        while (kat::gbl::activeWindow->isOpen()) {
+            update(kat::gbl::clock.getDeltaTime().count());
 
-    kat::Window::create(kat::Window::Config{
-        "Window",
-        glm::uvec2{1280, 720}
+            m_DownscaleFramebuffer->bindViewport();
+            renderWorld();
+
+            kat::Framebuffer::bindDefaultViewport();
+            renderScreen();
+
+            kat::gbl::activeWindow->update();
+            kat::gbl::clock.tick();
+        }
+    }
+
+    void TriggerHappy::setDefaults() {
+        kat::Texture2D::defaultFilter = kat::TextureFilter::Nearest;
+        spdlog::set_level(spdlog::level::debug);
+    }
+
+    void TriggerHappy::createWindow() {
+        kat::Window::create(kat::Window::Config{
+                "Window",
+                glm::uvec2{1280, 720}
 //        kat::Window::Fullscreen{0, true}
-    });
+        });
+    }
 
+    void TriggerHappy::loadAssets() {
+        m_ScreenQuad = kat::Mesh::createQuad({-1.0f, -1.0f}, {1.0f, 1.0f}, {{0.0f, 0.0f}, {1.0f, 1.0f}});
+        m_TestQuad = kat::Mesh::createQuad({-64.0f, -64.0f}, {64.0f, 64.0f}, { {0.0f, 0.5f}, {0.375f, 1.0f}});
+        m_TestShader = kat::GraphicsShader::load({"shaders/shader.frag", "shaders/shader.vert"});
+        m_ScreenShader = kat::GraphicsShader::load({"shaders/screen.frag", "shaders/screen.vert"});
 
-    std::vector<kat::StandardVertex> screenVertices = {
-            { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-            { {  1.0f, -1.0f, 0.0f }, { 1.0f, 0.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-            { {  1.0f,  1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-            { { -1.0f,  1.0f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-    };
+        m_DownscaleFramebuffer = kat::Framebuffer::makeSimpleRenderTarget({480, 270});
 
-    std::vector<unsigned int> screenIndices = {
-            0, 1, 2,
-            0, 2, 3
-    };
+        m_Camera = std::make_shared<kat::util::OrthographicCamera>(-240, 240, -135, 135);
 
-    std::vector<kat::StandardVertex> vertices = {
-            { { -64.0f, -64.0f, 0.0f }, { 0.0f, 0.5f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-            { {  64.0f, -64.0f, 0.0f }, { 0.375f, 0.5f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-            { {  64.0f,  64.0f, 0.0f }, { 0.375f, 1.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-            { { -64.0f,  64.0f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } },
-    };
+        m_Texture = kat::Texture2D::load("textures/test.png");
+    }
 
-    std::vector<unsigned int> indices = {
-            0, 1, 2,
-            0, 2, 3
-    };
-
-    auto mesh = std::make_shared<kat::Mesh>(vertices, indices, kat::PrimitiveMode::Triangles);
-
-    auto shader = kat::GraphicsShader::load({"shaders/shader2.frag", "shaders/shader2.vert"});
-
-    auto screenShader = kat::GraphicsShader::load({"shaders/texturedsg.frag", "shaders/shader.vert"});
-
-    auto screenMesh = std::make_shared<kat::Mesh>(screenVertices, screenIndices, kat::PrimitiveMode::Triangles);
-
-    auto screenFb = std::make_shared<kat::Framebuffer>(glm::uvec2{ 240, 135 });
-    auto screenTex = screenFb->addColorAttachment(0, kat::TextureFormat::RGB8);
-    screenFb->addPackedDepthStencilRenderBuffer();
-
-    screenTex->setFilter(kat::TextureFilter::Nearest);
-
-    auto camera = std::make_shared<kat::util::OrthographicCamera>(-120, 120, -67.5, 67.5);
-
-    auto tex = kat::Texture2D::load("textures/test.png");
-    tex->setFilter(kat::TextureFilter::Nearest);
-
-    auto clock = kat::util::Clock();
-
-    while (kat::gbl::activeWindow->isOpen()) {
-
+    void TriggerHappy::update(double deltaTime) {
         float moveScale = 1.0f;
         if (kat::input::isKeyPressed(GLFW_KEY_LEFT_SHIFT) || kat::input::isKeyPressed(GLFW_KEY_RIGHT_SHIFT)) {
             moveScale = 2.0f;
-        }
-        else if (kat::input::isKeyPressed(GLFW_KEY_LEFT_CONTROL) || kat::input::isKeyPressed(GLFW_KEY_RIGHT_CONTROL)) {
+        } else if (kat::input::isKeyPressed(GLFW_KEY_LEFT_CONTROL) ||
+                   kat::input::isKeyPressed(GLFW_KEY_RIGHT_CONTROL)) {
             moveScale = 0.5f;
         }
 
         if (kat::input::isKeyPressed(GLFW_KEY_A)) {
-            camera->move(moveScale * glm::vec3{-128.0f * clock.getDeltaTime().count(), 0.0f, 0.0f});
+            m_Camera->move(moveScale * glm::vec3{-128.0f * deltaTime, 0.0f, 0.0f});
         }
 
         if (kat::input::isKeyPressed(GLFW_KEY_D)) {
-            camera->move(moveScale * glm::vec3{128.0f * clock.getDeltaTime().count(), 0.0f, 0.0f});
+            m_Camera->move(moveScale * glm::vec3{128.0f * deltaTime, 0.0f, 0.0f});
         }
 
         if (kat::input::isKeyPressed(GLFW_KEY_W)) {
-            camera->move(moveScale * glm::vec3{0.0f, 128.0f * clock.getDeltaTime().count(), 0.0f});
+            m_Camera->move(moveScale * glm::vec3{0.0f, 128.0f * deltaTime, 0.0f});
         }
 
         if (kat::input::isKeyPressed(GLFW_KEY_S)) {
-            camera->move(moveScale * glm::vec3{0.0f, -128.0f * clock.getDeltaTime().count(), 0.0f});
+            m_Camera->move(moveScale * glm::vec3{0.0f, -128.0f * deltaTime, 0.0f});
         }
 
         if (kat::input::isKeyPressed(GLFW_KEY_MINUS)) {
-            camera->addZoom(-0.25 * moveScale * clock.getDeltaTime().count());
+            m_Camera->addZoom(-0.25 * moveScale * deltaTime);
         }
 
         if (kat::input::isKeyPressed(GLFW_KEY_EQUAL)) {
-            camera->addZoom(0.25 * moveScale * clock.getDeltaTime().count());
+            m_Camera->addZoom(0.25 * moveScale * deltaTime);
         }
 
-        camera->update();
+        m_Camera->update();
+    }
 
-        screenFb->bindViewport();
+    void TriggerHappy::renderWorld() {
+        kat::transform::push(m_Camera->getCombined());
 
         kat::graphics::clear(kat::colors::BLACK);
         kat::graphics::polygonMode(kat::graphics::PolygonMode::Fill);
 
-        shader->bind();
-        shader->bindTexture("uTexture", 0, tex);
-        shader->setMatrix4f("uViewProjection", camera->getCombined());
-        mesh->render();
+        m_TestShader->bind();
+        m_TestShader->bindTexture("uTexture", 0, m_Texture);
+        m_TestQuad->render();
 
-        kat::Framebuffer::bindDefaultViewport();
+        kat::transform::pop();
+    }
+
+    void TriggerHappy::renderScreen() {
         kat::graphics::polygonMode(kat::graphics::PolygonMode::Fill);
 
-        if (camera->getZoomScale() < 1.0f) {
+        if (m_Camera->getZoomScale() < 1.0f) {
             kat::graphics::clear({0.75f, 0.75f, 0.75f, 1.0f});
         }
 
-        screenShader->bind();
-        screenShader->bindTexture("uTexture", 0, screenTex);
-        screenShader->setFloat("uScale", camera->getZoomScale());
-        screenMesh->render();
-
-        kat::gbl::activeWindow->update();
-        clock.tick();
+        m_ScreenShader->bind();
+        m_ScreenShader->bindTexture("uTexture", 0, m_DownscaleFramebuffer->getColorAttachment(0));
+        m_ScreenShader->setFloat("uScale", m_Camera->getZoomScale());
+        m_ScreenQuad->render();
     }
+}
 
+void run() {
+    auto game = th::TriggerHappy();
+    game.run();
+}
+
+// setup like this so that cleanup is run after raii cleanup of things in the TriggerHappy object
+int main() {
+    run();
     kat::gbl::cleanup();
     return EXIT_SUCCESS;
 }

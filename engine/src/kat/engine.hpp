@@ -15,7 +15,7 @@ namespace kat {
     class Window;
 
     enum AppEvent {
-        Initialize, Cleanup
+        Initialize, Cleanup, Update
     };
 
     // Global State
@@ -26,7 +26,7 @@ namespace kat {
         void cleanup();
         void setup(); // registers init/cleanup event handlers
 
-        eventpp::EventDispatcher<AppEvent, void()> appEvents;
+        inline eventpp::EventDispatcher<AppEvent, void()> appEvents;
     }
 
     // Utility

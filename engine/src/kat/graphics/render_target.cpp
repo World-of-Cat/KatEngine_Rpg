@@ -2,13 +2,6 @@
 #include "kat/os.hpp"
 
 namespace kat {
-    RenderTarget::RenderTarget(const std::shared_ptr<Framebuffer> &fb) : m_Framebuffer(fb) {
-    }
-
-    void RenderTarget::bindFramebuffer() {
-
-    }
-
     Framebuffer::Framebuffer(const glm::uvec2 &size) : m_Size(size) {
         glCreateFramebuffers(1, &m_Handle);
     }
@@ -36,7 +29,7 @@ namespace kat {
     std::shared_ptr<kat::Texture2D> Framebuffer::addColorAttachment(size_t index, kat::TextureFormat format) {
         assert(index < MAX_COLOR_ATTACHMENTS);
 
-        auto texture = std::make_shared<Texture2D>(m_Size, format);
+        auto texture = Texture2D::create(m_Size, format);
 
         glNamedFramebufferTexture(m_Handle, GL_COLOR_ATTACHMENT0 + index, texture->getHandle(), 0);
 
@@ -45,7 +38,7 @@ namespace kat {
     }
 
     std::shared_ptr<kat::Texture2D> Framebuffer::addDepthAttachment(DepthFormat format) {
-        auto texture = std::make_shared<Texture2D>(m_Size, static_cast<TextureFormat>(format));
+        auto texture = Texture2D::create(m_Size, static_cast<TextureFormat>(format));
 
         glNamedFramebufferTexture(m_Handle, GL_DEPTH_ATTACHMENT, texture->getHandle(), 0);
 
@@ -54,7 +47,7 @@ namespace kat {
     }
 
     std::shared_ptr<kat::Texture2D> Framebuffer::addStencilAttachment() {
-        auto texture = std::make_shared<Texture2D>(m_Size, TextureFormat::Stencil);
+        auto texture = Texture2D::create(m_Size, TextureFormat::Stencil);
 
         glNamedFramebufferTexture(m_Handle, GL_STENCIL_ATTACHMENT, texture->getHandle(), 0);
 
@@ -97,6 +90,13 @@ namespace kat {
     void Framebuffer::bindViewport() const {
         bind();
         glViewport(0, 0, static_cast<int>(m_Size.x), static_cast<int>(m_Size.y));
+    }
+
+    std::unique_ptr<Framebuffer> Framebuffer::makeSimpleRenderTarget(const glm::uvec2 &size) {
+        auto fb = std::make_unique<Framebuffer>(size);
+        fb->addColorAttachment(0, kat::TextureFormat::RGBA8);
+        fb->addPackedDepthStencilRenderBuffer();
+        return fb;
     }
 
 #pragma clang diagnostic push

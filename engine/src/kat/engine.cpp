@@ -5,6 +5,7 @@
 #include <ranges>
 #include <algorithm>
 #include "kat/graphics/sprite.hpp"
+#include "kat/util/transform_stack.hpp"
 
 namespace kat {
     void gbl::cleanup() {
@@ -42,7 +43,10 @@ namespace kat {
     }
 
     void gbl::setup() {
-        gbl::appEvents.appendListener(kat::AppEvent::Initialize, kat::Sprite::init);
-        gbl::appEvents.appendListener(kat::AppEvent::Cleanup, kat::Sprite::cleanup);
+        gbl::appEvents.appendListener(AppEvent::Initialize, kat::Sprite::init);
+        gbl::appEvents.appendListener(AppEvent::Cleanup, kat::Sprite::cleanup);
+
+        gbl::appEvents.appendListener(AppEvent::Cleanup, [](){ kat::transform::unravel(true); });
+        gbl::appEvents.appendListener(AppEvent::Update, [](){ kat::transform::unravel(false); });
     }
 }

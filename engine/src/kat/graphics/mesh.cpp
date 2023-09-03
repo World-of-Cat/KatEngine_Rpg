@@ -233,4 +233,16 @@ namespace kat {
             m_VertexArray->drawArrays(primitiveMode, count, offset);
         }
     }
+
+    std::unique_ptr<Mesh> Mesh::createQuad(const glm::vec2 &bottomLeft, const glm::vec2 &topRight,
+                                           const std::pair<glm::vec2, glm::vec2> &uvPair) {
+        std::vector<StandardVertex> vertices = {
+                { { bottomLeft, 0.0f }, uvPair.first, {0,0,0,1}, {0,0,0} },
+                { { topRight.x, bottomLeft.y, 0.0f }, { uvPair.second.x, uvPair.first.y }, {0,0,0,1}, {0,0,0} },
+                { { topRight, 0.0f }, uvPair.second, {0,0,0,1}, {0,0,0} },
+                { { bottomLeft.x, topRight.y, 0.0f }, { uvPair.first.x, uvPair.second.y }, {0,0,0,1}, {0,0,0} }
+        };
+
+        return std::make_unique<Mesh>(vertices, PrimitiveMode::TriangleFan);
+    }
 }

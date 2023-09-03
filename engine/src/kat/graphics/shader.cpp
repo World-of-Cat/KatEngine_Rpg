@@ -2,6 +2,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include "kat/graphics/texture.hpp"
+#include "kat/util/clock.hpp"
+#include "kat/util/transform_stack.hpp"
 
 namespace kat {
     ShaderType getTypeFromName(const std::string& name) {
@@ -186,6 +188,8 @@ namespace kat {
 
             delete[] buf;
         }
+
+        scan();
     }
 
     GraphicsShader::GraphicsShader(const std::vector<SSrcDef> &shaders) {
@@ -212,6 +216,8 @@ namespace kat {
 
             delete[] buf;
         }
+
+        scan();
     }
 
     unsigned int GraphicsShader::operator*() const noexcept {
@@ -222,8 +228,9 @@ namespace kat {
         return m_Handle;
     }
 
-    void GraphicsShader::bind() const {
+    void GraphicsShader::bind(bool applyDefaults_) const {
         glUseProgram(m_Handle);
+        if (applyDefaults_) applyDefaults();
     }
 
     int GraphicsShader::getUniformLocation(const std::string &name) const {
@@ -567,6 +574,35 @@ namespace kat {
     GraphicsShader::bindTexture(const std::string &name, int unit, const std::shared_ptr<Texture2D> &texture) {
         texture->bindUnit(0);
         setInteger(name, unit);
+    }
+
+    void GraphicsShader::applyDefaults() const {
+        if (m_HasTimeUniform) {
+            setFloat("uTime", static_cast<float>(kat::gbl::clock.getThisFrame().time_since_epoch().count()));
+        }
+
+        if (m_HasTransformUniform) {
+            setMatrix4f("uTransform", kat::transform::getTransform());
+        }
+    }
+
+    void GraphicsShader::scan() {
+        int count;
+        int maxBufLen;
+        glGetProgramiv(m_Handle, GL_ACTIVE_UNIFORMS, &count);
+        glGetProgramiv(m_Handle, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxBufLen);
+        char* buf = new char[maxBufLen];
+        for (int i = 0 ; i < count ; i++) {
+            memset(buf, 0, maxBufLen);
+            glGetActiveUniformName(m_Handle, i, maxBufLen, nullptr, buf);
+            if (strcmp(buf, "uTime") == 0) {
+                m_HasTimeUniform = true;
+                spdlog::debug("Program {} has uTime", m_Handle);
+            } else if (strcmp(buf, "uTransform") == 0) {
+                m_HasTransformUniform = true;
+                spdlog::debug("Program {} has uTransform", m_Handle);
+            }
+        }
     }
 
     void

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "kat/engine.hpp"
+#include <unordered_set>
 
 namespace kat {
 
@@ -26,6 +27,7 @@ namespace kat {
 
         bool isOpen() const;
 
+        // THIS SHOULD REALLY BE THE LAST THING CALLED IN THE MAIN LOOP
         void update();
 
         glm::ivec2 getSize() const;
@@ -43,5 +45,12 @@ namespace kat {
 
     namespace input {
         bool isKeyPressed(int key);
+
+        namespace internal {
+            inline std::unordered_set<int> keysPressedThisUpdate;
+            inline std::unordered_set<int> keysPressedLastUpdate;
+
+            void performUpdate();
+        }
     }
 }

@@ -74,7 +74,7 @@ namespace kat {
         unsigned int operator*() const noexcept;
         [[nodiscard]] unsigned int getHandle() const noexcept;
 
-        void bind() const;
+        void bind(bool applyDefaults_ = true) const;
 
         [[nodiscard]] int getUniformLocation(const std::string& name) const;
 
@@ -118,9 +118,16 @@ namespace kat {
         void setMatrix4x4f(const std::string& name, const glm::mat4x4& m) const;
 
         void bindTexture(const std::string& name, int unit, const std::shared_ptr<Texture2D>& texture);
+
+        void applyDefaults() const;
+
     private:
+        bool m_HasTimeUniform;
+        bool m_HasTransformUniform;
 
         unsigned int m_Handle;
+
+        void scan();
     };
 
     class ComputeShader {

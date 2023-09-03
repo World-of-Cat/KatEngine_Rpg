@@ -57,6 +57,8 @@ namespace kat {
 
         static void bindDefaultViewport();
 
+        static std::unique_ptr<Framebuffer> makeSimpleRenderTarget(const glm::uvec2& size);
+
     private:
         unsigned int m_Handle;
 
@@ -66,16 +68,5 @@ namespace kat {
         std::shared_ptr<kat::Texture2D> m_StencilAttachment;
         std::shared_ptr<kat::RenderBuffer> m_DepthStencilRenderBuffer;
 
-    };
-
-    class RenderTarget {
-    public:
-        explicit RenderTarget(const std::shared_ptr<Framebuffer>& fb);
-
-        virtual void bindFramebuffer();
-
-    private:
-
-        std::shared_ptr<Framebuffer> m_Framebuffer;
     };
 }

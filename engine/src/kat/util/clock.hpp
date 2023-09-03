@@ -40,4 +40,9 @@ namespace kat::util {
         time_point m_ThisFrame;
         duration m_DeltaTime;
     };
+
+}
+
+namespace kat::gbl {
+    inline kat::util::Clock clock{};
 }

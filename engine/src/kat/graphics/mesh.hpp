@@ -182,7 +182,7 @@ namespace kat {
         void render(size_t count);
         void render(size_t count, size_t offset);
 
-
+        static std::unique_ptr<Mesh> createQuad(const glm::vec2& bottomLeft, const glm::vec2& topRight, const std::pair<glm::vec2, glm::vec2>& uvPair);
     private:
 
         std::shared_ptr<VertexArray> m_VertexArray;

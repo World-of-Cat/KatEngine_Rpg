@@ -108,7 +108,7 @@ namespace kat {
 
         template<typename T>
         static std::shared_ptr<Texture2D> create(const glm::uvec2& size, TextureFormat format, const T* data) {
-            return std::make_shared<Texture2D>(size, format, data, pixel_data_type_v<T>);
+            return Texture2D::create(size, format, data, pixel_data_type_v<T>);
         };
 
         static std::shared_ptr<Texture2D> load(const std::filesystem::path& path);
@@ -121,6 +121,7 @@ namespace kat {
         [[nodiscard]] Region getRegion(glm::uvec2 bottomLeft, glm::uvec2 topRight);
         [[nodiscard]] Region getFullRegion();
 
+        static inline kat::TextureFilter defaultFilter = kat::TextureFilter::Nearest;
     private:
         Texture2D(const glm::uvec2& size, TextureFormat format);
         Texture2D(const glm::uvec2& size, TextureFormat format, const void* data, PixelDataType dataType);

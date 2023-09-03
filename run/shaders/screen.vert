@@ -8,15 +8,11 @@ layout(location=3) in vec3 vNormal;
 out vec4 fTint;
 out vec3 fNormal;
 out vec2 fUV;
-out vec4 fPosition;
 
-uniform mat4 uViewProjection;
-
+uniform float uScale;
 
 void main() {
-    fPosition = uViewProjection * vec4(vPosition, 1.0);
-
-    gl_Position = fPosition;
+    gl_Position = vec4(uScale * vPosition, 1.0);
 
     fUV = vTexCoord;
     fTint = vTint;

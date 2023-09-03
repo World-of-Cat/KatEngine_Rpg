@@ -145,6 +145,7 @@ namespace kat {
                 static_cast<int>(size.x), static_cast<int>(size.y), 0,
                 glFormatOf(format), GL_UNSIGNED_BYTE, nullptr);
         glBindTexture(GL_TEXTURE_2D, 0);
+        setFilter(defaultFilter);
     }
 
     Texture2D::Texture2D(const glm::uvec2 &size, TextureFormat format, const void *data, PixelDataType dataType)
@@ -154,6 +155,8 @@ namespace kat {
                 static_cast<int>(size.x), static_cast<int>(size.y), 0,
                 glFormatOf(format), static_cast<unsigned int>(dataType), data);
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        setFilter(defaultFilter);
     }
 
     void Texture2D::bind() {
@@ -169,7 +172,7 @@ namespace kat {
 
         unsigned char* data = stbi_load(f.c_str(), &width, &height, &nc, 0);
 
-        auto tex = std::make_shared<Texture2D>(glm::uvec2(width, height), formatForChannels(nc), data, kat::PixelDataType::UnsignedByte);
+        auto tex = Texture2D::create(glm::uvec2(width, height), formatForChannels(nc), data, kat::PixelDataType::UnsignedByte);
 
         stbi_image_free(data);
 
@@ -185,7 +188,7 @@ namespace kat {
 
         unsigned char* data = stbi_load(f.c_str(), &width, &height, &nc, desiredChannels);
 
-        auto tex = std::make_shared<Texture2D>(glm::uvec2(width, height), formatForChannels(desiredChannels), data, kat::PixelDataType::UnsignedByte);
+        auto tex = Texture2D::create(glm::uvec2(width, height), formatForChannels(desiredChannels), data, kat::PixelDataType::UnsignedByte);
 
         stbi_image_free(data);
 

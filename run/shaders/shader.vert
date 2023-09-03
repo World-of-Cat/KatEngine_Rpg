@@ -8,11 +8,15 @@ layout(location=3) in vec3 vNormal;
 out vec4 fTint;
 out vec3 fNormal;
 out vec2 fUV;
+out vec4 fPosition;
 
-uniform float uScale;
+uniform mat4 uTransform;
+
 
 void main() {
-    gl_Position = vec4(uScale * vPosition, 1.0);
+    fPosition = uTransform * vec4(vPosition, 1.0);
+
+    gl_Position = fPosition;
 
     fUV = vTexCoord;
     fTint = vTint;
