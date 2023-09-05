@@ -24,7 +24,10 @@ add_library(KatEngine src/kat/engine.cpp src/kat/engine.hpp
         src/kat/util/clock.hpp
         src/kat/graphics/sprite.cpp
         src/kat/graphics/sprite.hpp
-        src/kat/util/transform_stack.hpp)
+        src/kat/util/transform_stack.hpp
+        src/kat/util/tiled_loader.cpp
+        src/kat/util/tiled_loader.hpp
+        src/kat/util/bounded_array.hpp)
 target_include_directories(KatEngine PUBLIC src/)
 target_link_libraries(KatEngine PUBLIC glfw glad::glad glm::glm stb::stb spdlog::spdlog eventpp::eventpp)
 

@@ -13,3 +13,6 @@
 [submodule "libs/eventpp"]
 	path = libs/eventpp
 	url = https://github.com/wqking/eventpp
+[submodule "libs/pugixml"]
+	path = libs/pugixml
+	url = https://github.com/zeux/pugixml
