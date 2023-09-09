@@ -4,6 +4,7 @@
 #include <any>
 #include <filesystem>
 #include <vector>
+#include <glm/glm.hpp>
 
 namespace kat::rpg {
 
@@ -11,5 +12,15 @@ namespace kat::rpg {
         std::unordered_map<std::string, std::any> properties;
     };
 
-    struct 
+    struct Tile {
+        unsigned int globalId;
+
+        unsigned int tilesetId;
+
+        glm::uvec2 size;
+
+        // TODO: Wang Tiles Autotiling
+
+        CustomPropertyTable properties;
+    };
 }
